@@ -8,18 +8,15 @@ public class EmployeePayrollService {
     private List<PayRoll> employeePayrollList;
 
     public enum IOService {
-        CONSOLE_IO, FILE_IO, DB_IO, REST_IO
+        CONSOLE_IO, FILE_IO
     };
 
     public EmployeePayrollService() {
         this.employeePayrollList = new ArrayList<PayRoll>();
     }
 
-    public void writeEmployeePayroll(IOService ioService) {
-        if (ioService.equals(IOService.CONSOLE_IO))
-            employeePayrollList.stream().forEach(System.out::println);
-        else if (ioService.equals(IOService.FILE_IO))
-            new EmployeePayrollFileIOService().write(employeePayrollList);
+    public EmployeePayrollService(List payrolls) {
+        this.employeePayrollList = payrolls;
     }
 
     private void readEmployeePayroll(Scanner consoleINputReader) {
@@ -32,9 +29,22 @@ public class EmployeePayrollService {
         employeePayrollList.add(new PayRoll(id, name, salary));
     }
 
+    public void writeEmployeePayroll(IOService ioService) {
+        if (ioService.equals(IOService.CONSOLE_IO))
+            employeePayrollList.stream().forEach(System.out::println);
+        else if (ioService.equals(IOService.FILE_IO))
+            new EmployeePayrollFileIOService().write(employeePayrollList);
+    }
+
     public void printData(IOService ioService) {
         if (ioService.equals(IOService.FILE_IO))
             new EmployeePayrollFileIOService().printData();
+    }
+
+    public long countEntries(IOService ioService) {
+        if (ioService.equals(IOService.FILE_IO))
+            return new EmployeePayrollFileIOService().countEntries();
+        return 0;
     }
 
     public static void main(String[] args) {
@@ -43,6 +53,8 @@ public class EmployeePayrollService {
         Scanner consoleINputReader = new Scanner(System.in);
         employeePayrollService.readEmployeePayroll(consoleINputReader);
         employeePayrollService.writeEmployeePayroll(IOService.FILE_IO);
+        employeePayrollService.countEntries(IOService.FILE_IO);
+        employeePayrollService.printData(IOService.FILE_IO);
     }
 
 }
